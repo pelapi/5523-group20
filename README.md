@@ -8,6 +8,10 @@
 3. **Rule Extraction**: Mined potential biological patterns between genes and diseases.
 4. **Commonality Analysis**: Analyzed commonalities between different disease categories.
 
+### 1.1 Motivation & Hypothesis
+*   **Why this task?** Understanding whether gene-level properties alone can predict disease classes helps identify "generalist" vs. "specialist" genes.
+*   **Hypothesis**: Genes associated with similar disease classes share topological properties (DSI) and pleiotropic patterns (DPI). We test if these **interpretable indices** carry enough signal for classification, deliberately excluding opaque network embeddings in Phase 2 to focus on biological interpretability.
+
 ---
 
 ---
@@ -37,13 +41,16 @@ We used **Preferential Attachment (PA)** and **SVD Matrix Factorization** as bas
     *   **C04 (Neoplasms)** is the dominant category, far outnumbering others.
     *   **C10 (Nervous System)** and **C23 (Pathological Conditions)** follow.
 *   **Impact**: Models may be biased towards predicting neoplasms while neglecting minority classes (e.g., F01 Mental Disorders).
+    *   **Mechanism of Failure**: Severe imbalance causes models to optimize for global accuracy by "collapsing" to the majority class (C04). This explains why Micro-F1 (accuracy-driven) appears decent while Macro-F1 (minority-sensitive) is low.
 
 ### 2.2 Feature Analysis
 ![Feature Boxplot](results/figures/feature_distribution_boxplot.png)
 *   **DSI (Disease Specificity Index)**:
     *   **C04 (Neoplasms)** genes generally have lower DSI. This suggests carcinogenic genes are often "multi-functional," participating in various biological processes with low specificity.
     *   Genes for **C16 (Congenital Abnormalities)** show higher DSI, indicating higher specificity.
+    *   Genes for **C16 (Congenital Abnormalities)** show higher DSI, indicating higher specificity.
 *   **DPI (Disease Pleiotropy Index)**: Negatively correlated with DSI; tumor genes tend to have higher DPI.
+*   **Rationale**: We selected these features because they map directly to biological concepts (Specificity vs. Pleiotropy), allowing us to interpret *why* a model classifies a gene as "Cancer-related".
 
 ---
 
@@ -59,7 +66,12 @@ We conducted a rigorous comparison of four different algorithms to identify the 
 | **1** | **KNN (K-Nearest Neighbors)** | **0.3245** | **Winner!** Demonstrates that "Gene Similarity" is the strongest predictor. Genes with similar DSI/DPI profiles tend to cause similar diseases. |
 | 2 | Random Forest | 0.3007 | Strong baseline, but slightly outperformed by KNN's local instance-based learning. |
 | 3 | Naive Bayes | 0.1198 | Poor performance due to the assumption of feature independence (DSI and DPI are correlated). |
+| 3 | Naive Bayes | 0.1198 | Poor performance due to the assumption of feature independence (DSI and DPI are correlated). |
 | 4 | Neural Network (MLP) | 0.0979 | Failed to generalize. Likely due to the low dimensionality of features (only 5 features), which is insufficient for Deep Learning. |
+
+#### Why did KNN outperform complex models?
+*   **Low Dimensionality**: With only ~5 features, the data manifold is low-dimensional. Deep Learning (MLP) is overkill and prone to overfitting or underfitting without massive feature spaces.
+*   **Local Similarity**: The "Guilt-by-Association" principle works locally. Genes with similar DSI/DPI scores cluster together in feature space, which KNN captures perfectly. Random Forest struggles to find orthogonal splits in such a highly overlapping distribution.
 
 ### 3.2 Robustness Check (5-Fold Cross-Validation)
 To ensure the reliability of our results, we performed **5-Fold Cross-Validation** on the Random Forest model.
