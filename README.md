@@ -34,8 +34,8 @@ We used **Preferential Attachment (PA)** and **SVD Matrix Factorization** as bas
     *   **Preferential Attachment**: AUC = **0.9346**
     *   **SVD**: AUC = 0.5204
 *   **Conclusion**:
-    *   The high score of PA proves that the network exhibits a strong **"Rich-get-Richer"** property: Hub genes tend to associate with Hub diseases.
-    *   This provides a solid topological foundation for the subsequent feature-based classification.
+    *   The high score of PA confirms that the network exhibits a strong **"Rich-get-Richer"** property.
+    *   **Hypothesis Bridge**: We *hypothesize* that this topological centrality might be captured by gene-level metrics like DSI/DPI, potentially aiding classification. However, we acknowledge that network centrality does not guarantee feature separability for disease classes.
 
 ---
 
@@ -69,7 +69,7 @@ We conducted a rigorous comparison of four different algorithms to identify the 
 
 | Rank | Model | F1 Micro Score | Insight |
 | :--- | :--- | :--- | :--- |
-| **1** | **KNN (K-Nearest Neighbors)** | **0.3245** | **Winner!** Demonstrates that "Gene Similarity" is the strongest predictor. Genes with similar DSI/DPI profiles tend to cause similar diseases. |
+| **1** | **KNN (K-Nearest Neighbors)** | **0.3245** | **Best Baseline**: Suggests that "Gene Similarity" carries predictive signal, particularly for dominant classes (C04). Performance on minority classes remains limited. |
 | 2 | Random Forest | 0.3007 | Strong baseline, but slightly outperformed by KNN's local instance-based learning. |
 | 3 | Naive Bayes | 0.1198 | Poor performance due to the assumption of feature independence (DSI and DPI are correlated). |
 | 3 | Naive Bayes | 0.1198 | Poor performance due to the assumption of feature independence (DSI and DPI are correlated). |
@@ -114,10 +114,10 @@ IF Score > 0.31:
         PREDICT: Non-Cancer (Class 0)
 ```
 
-### Biological Interpretation
-> **Hypothesis Only**: This rule is derived from the current dataset and may reflect the over-representation of cancer studies in DisGeNET.
-*   Genes with **High Association Score (> 0.31)** and **Low Specificity (DSI <= 0.51)** are highly likely to be cancer drivers.
-*   This aligns with biological intuition: Cancer is a complex systemic disease, and its key genes (e.g., TP53, EGFR) often participate in broad cellular pathways, thus having a low Specificity Index (DSI).
+### Biological Interpretation (Hypothesis Generation)
+> **Caution**: These rules are derived from the current dataset and may reflect **Literature Bias** (e.g., cancer genes are more heavily studied and annotated).
+*   **Observation**: In this dataset, genes with **High Association Score** and **Low Specificity** tend to be labeled as Cancer (C04).
+*   **Hypothesis**: This suggests "generalist" genes might be key drivers in systemic diseases like cancer, but this requires validation across independent databases to rule out annotation bias.
 
 ---
 
@@ -132,7 +132,8 @@ By calculating the Jaccard Similarity, we identified the following strong associ
     *   Suggests that nervous system diseases are often accompanied by broad pathological physiological changes.
 2.  **C04 (Neoplasms) <--> C06 (Digestive System)** (Similarity: 0.389)
     *   Reveals the dominance of digestive system cancers within the tumor data, indicating a high overlap of pathogenic genes.
-    *   Molecular evidence for **"Mind-Body Connection"**: Neurological diseases and psychiatric disorders share a significant number of genes.
+    *   **Observation**: Neurological diseases and psychiatric disorders share a significant number of genes.
+    *   **Limitation**: This could stem from **Annotation Bias** (shared research focus) rather than purely shared pathogenesis. Further functional validation is needed.
 
 > **Note**: High similarity may also stem from shared annotation bias in the literature.
 
@@ -141,8 +142,8 @@ By calculating the Jaccard Similarity, we identified the following strong associ
 ## 7. Conclusion
 This project successfully established a complete gene-disease analysis pipeline:
 1.  **Data Cleaning**: Processed 70,000+ records, filtering for Top 20 disease classes.
-2.  **Model Selection**: Confirmed **KNN** as the best model.
-    *   *Association Analysis*: Proved that **Feature Similarity** is the core driver for predicting gene-disease associations, validating the "Guilt-by-Association" hypothesis.
+2.  **Model Selection**: Identified **KNN** as the most effective baseline.
+    *   *Association Analysis*: **Suggested** that Feature Similarity is a relevant factor for predicting gene-disease associations, supporting the "Guilt-by-Association" hypothesis for major classes.
 3.  **Knowledge Discovery**:
     *   **Rules**: Discovered that "Low Specificity Genes are prone to Cancer."
     *   **Commonalities**: Revealed molecular comorbidity mechanisms between Neural-Mental and Digestive-Tumor classes.
