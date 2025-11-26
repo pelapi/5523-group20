@@ -18,6 +18,8 @@ Before diving into feature analysis, we validated the topological properties of 
 ### 2.1 Link Prediction
 We used **Preferential Attachment (PA)** and **SVD Matrix Factorization** as baseline models to predict potential gene-disease associations.
 
+![Link Prediction PR Curves](results/midterm_results/pr_curves.png)
+
 *   **Results**:
     *   **Preferential Attachment**: AUC = **0.9346**
     *   **SVD**: AUC = 0.5204
