@@ -1,0 +1,13 @@
+Gene–Disease Link Prediction Results
+==================================================
+
+| Method | AUC | PR-AUC |
+|--------|-----|--------|
+| Preferential Attachment | 0.9346 | 0.9377 |
+| SVD (Matrix Factorization) | 0.5204 | 0.6659 |
+
+Dataset Stats:
+- Total records: 73469
+- Genes: 8545
+- Diseases: 6490
+- Test edges: 14693

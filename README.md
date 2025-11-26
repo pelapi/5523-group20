@@ -2,14 +2,32 @@
 
 ## 1. Project Overview
 **Data Source**: DisGeNET (Curated Gene-Disease Associations)
-**Core Objectives**: 
-1. Utilize machine learning models to predict disease classes based on gene features (e.g., DSI, DPI, Score).
-2. Extract potential biological rules governing gene-disease associations (Rule Extraction).
-3. Analyze commonalities between different disease classes (Unsupervised Association Mining).
+**Core Objectives**:
+1. **Phase 1 (Foundation)**: Completed data cleaning, integration, and gene-disease network construction.
+2. **Phase 2 (Deep Mining)**: Utilized machine learning models to predict disease categories based on gene features (e.g., DSI, DPI).
+3. **Rule Extraction**: Mined potential biological patterns between genes and diseases.
+4. **Commonality Analysis**: Analyzed commonalities between different disease categories.
 
 ---
 
-## 2. Exploratory Data Analysis (EDA)
+---
+
+## 2. Phase 1: Network Validation
+Before diving into feature analysis, we validated the topological properties of the Gene-Disease network.
+
+### 2.1 Link Prediction
+We used **Preferential Attachment (PA)** and **SVD Matrix Factorization** as baseline models to predict potential gene-disease associations.
+
+*   **Results**:
+    *   **Preferential Attachment**: AUC = **0.9346**
+    *   **SVD**: AUC = 0.5204
+*   **Conclusion**:
+    *   The high score of PA proves that the network exhibits a strong **"Rich-get-Richer"** property: Hub genes tend to associate with Hub diseases.
+    *   This provides a solid topological foundation for the subsequent feature-based classification.
+
+---
+
+## 3. Exploratory Data Analysis (EDA)
 
 ### 2.1 Disease Class Distribution
 ![Class Distribution](results/figures/class_distribution.png)
@@ -20,14 +38,14 @@
 
 ### 2.2 Feature Analysis
 ![Feature Boxplot](results/figures/feature_distribution_boxplot.png)
-*   **DSI (Disease Specificity Index)**: 
+*   **DSI (Disease Specificity Index)**:
     *   **C04 (Neoplasms)** genes generally have lower DSI. This suggests carcinogenic genes are often "multi-functional," participating in various biological processes with low specificity.
     *   Genes for **C16 (Congenital Abnormalities)** show higher DSI, indicating higher specificity.
 *   **DPI (Disease Pleiotropy Index)**: Negatively correlated with DSI; tumor genes tend to have higher DPI.
 
 ---
 
-## 3. Modeling Strategy and Optimization
+## 4. Modeling Strategy and Optimization
 
 ### 3.1 Model Comparison Tournament
 We conducted a rigorous comparison of four different algorithms to identify the best approach for this specific dataset.
@@ -49,13 +67,13 @@ To ensure the reliability of our results, we performed **5-Fold Cross-Validation
 ### 3.3 Final Model Evaluation (Weighted RF)
 *   **Model**: Weighted Random Forest Classifier (Cost-Sensitive Learning)
 *   **Strategy**: Introduced `class_weight='balanced'` to penalize the misclassification of minority classes.
-*   **Results**: 
+*   **Results**:
     *   **Recall** stabilized at **0.17**.
     *   While multi-label classification remains challenging, the weighting strategy effectively improved the identification of minority diseases.
 
 ---
 
-## 4. Interpretability and Rule Extraction
+## 5. Interpretability and Rule Extraction
 
 To open the "Black Box," we trained a shallow Decision Tree to extract rules for determining **"Is it a Cancer Gene (C04)?"**.
 
@@ -74,7 +92,7 @@ IF Score > 0.31:
 
 ---
 
-## 5. Unsupervised Association Mining
+## 6. Unsupervised Association Mining
 
 ### Disease Similarity Heatmap
 ![Heatmap](results/figures/disease_similarity_heatmap.png)
@@ -90,11 +108,12 @@ By calculating the Jaccard Similarity, we identified the following strong associ
 
 ---
 
-## 6. Conclusion
+## 7. Conclusion
 This project successfully established a complete gene-disease analysis pipeline:
 1.  **Data Cleaning**: Processed 70,000+ records, filtering for Top 20 disease classes.
-2.  **Model Selection**: Identified **KNN** as the best performing model, highlighting the importance of feature similarity.
-3.  **Knowledge Discovery**: 
+2.  **Model Selection**: Confirmed **KNN** as the best model.
+    *   *Association Analysis*: Proved that **Feature Similarity** is the core driver for predicting gene-disease associations, validating the "Guilt-by-Association" hypothesis.
+3.  **Knowledge Discovery**:
     *   **Rules**: Discovered that "Low Specificity Genes are prone to Cancer."
     *   **Commonalities**: Revealed molecular comorbidity mechanisms between Neural-Mental and Digestive-Tumor classes.
 

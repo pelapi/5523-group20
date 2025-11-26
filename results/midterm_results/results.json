@@ -1,0 +1,16 @@
+{
+  "dataset_stats": {
+    "total_records": 73469,
+    "unique_genes": 8545,
+    "unique_diseases": 6490,
+    "avg_score": 0.330836951639467
+  },
+  "Preferential Attachment": {
+    "auc": 0.9346160589974306,
+    "pr_auc": 0.9377009903766363
+  },
+  "SVD (Matrix Factorization)": {
+    "auc": 0.5204178466952445,
+    "pr_auc": 0.6658658166504301
+  }
+}
