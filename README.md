@@ -1,6 +1,12 @@
 # Gene-Disease Association Analysis and Prediction Report
 
 ## 1. Project Overview
+> **⚠️ Scope & Limitation Disclaimer**:
+> This project is an **exploratory, proof-of-concept study**. The primary goal is to establish a computational pipeline and generate biological hypotheses.
+> *   **Not a Clinical Tool**: The results should not be used for clinical diagnosis.
+> *   **Hypothesis Generation**: The rules and associations discovered are hypotheses requiring further biological validation.
+> *   **Feature Scope**: We deliberately limited features to interpretable indices (DSI, DPI) to test their predictive power, acknowledging that this simplifies the complex biological reality.
+
 **Data Source**: DisGeNET (Curated Gene-Disease Associations)
 **Core Objectives**:
 1. **Phase 1 (Foundation)**: Completed data cleaning, integration, and gene-disease network construction.
@@ -81,9 +87,17 @@ To ensure the reliability of our results, we performed **5-Fold Cross-Validation
 ### 3.3 Final Model Evaluation (Weighted RF)
 *   **Model**: Weighted Random Forest Classifier (Cost-Sensitive Learning)
 *   **Strategy**: Introduced `class_weight='balanced'` to penalize the misclassification of minority classes.
-*   **Results**:
-    *   **Recall** stabilized at **0.17**.
-    *   While multi-label classification remains challenging, the weighting strategy effectively improved the identification of minority diseases.
+*   **Detailed Metrics**:
+
+| Metric | Score | Interpretation |
+| :--- | :--- | :--- |
+| **Micro F1** | **0.2235** | Reflects overall accuracy, dominated by majority classes (C04, C10). |
+| **Macro F1** | **0.1302** | **Critical Insight**: The low Macro F1 reveals the model's struggle with minority classes. |
+
+*   **Per-Class Performance (Selected)**:
+    *   **Majority Class (C04 Neoplasms)**: Support=4232, Recall=0.27. The model is biased towards this class.
+    *   **Minority Class (F01 Mental)**: Support=351, Recall=0.01. The model fails to identify these due to extreme imbalance.
+    *   **Conclusion**: While weighting helped, the feature signal (DSI/DPI) alone is insufficient to distinguish minority classes from the dominant cancer signal. Future work needs richer features (embeddings, pathways).
 
 ---
 
@@ -101,6 +115,7 @@ IF Score > 0.31:
 ```
 
 ### Biological Interpretation
+> **Hypothesis Only**: This rule is derived from the current dataset and may reflect the over-representation of cancer studies in DisGeNET.
 *   Genes with **High Association Score (> 0.31)** and **Low Specificity (DSI <= 0.51)** are highly likely to be cancer drivers.
 *   This aligns with biological intuition: Cancer is a complex systemic disease, and its key genes (e.g., TP53, EGFR) often participate in broad cellular pathways, thus having a low Specificity Index (DSI).
 
@@ -117,8 +132,9 @@ By calculating the Jaccard Similarity, we identified the following strong associ
     *   Suggests that nervous system diseases are often accompanied by broad pathological physiological changes.
 2.  **C04 (Neoplasms) <--> C06 (Digestive System)** (Similarity: 0.389)
     *   Reveals the dominance of digestive system cancers within the tumor data, indicating a high overlap of pathogenic genes.
-3.  **C10 (Nervous System) <--> F03 (Mental Disorders)** (Similarity: 0.320)
     *   Molecular evidence for **"Mind-Body Connection"**: Neurological diseases and psychiatric disorders share a significant number of genes.
+
+> **Note**: High similarity may also stem from shared annotation bias in the literature.
 
 ---
 
