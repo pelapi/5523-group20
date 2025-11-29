@@ -84,20 +84,32 @@ We formulated the problem as a multi-class classification task: *Predict the pri
 
 ### 3.1 Phase 1: Network Topology Validation
 The results of the link prediction experiments were decisive:
+
+![Link Prediction PR Curves](midterm_results/pr_curves.png)
+
 *   **Preferential Attachment (PA)**: **AUC = 0.9346**
 *   **SVD Matrix Factorization**: **AUC = 0.5204**
 
 **Analysis**: The exceptional performance of PA confirms that the DisGeNET gene-disease network is strongly **scale-free**. The network topology is dominated by "hub" genes and "hub" diseases that preferentially attach to each other. This validates our hypothesis that degree-based metrics (like DSI and Degree Centrality) are not just statistical artifacts but are fundamental drivers of the network's structure. The failure of SVD (AUC ~0.5) suggests that simple linear matrix factorization cannot capture the complex bipartite structure as effectively as the degree-based heuristic.
 
 ### 3.2 Exploratory Data Analysis (EDA)
-**Class Imbalance**: The dataset exhibits extreme class imbalance. The **Neoplasms (C04)** category accounts for the vast majority of associations, followed by **Nervous System Diseases (C10)**. Rare categories like **Mental Disorders (F01)** represent less than 1% of the data. This poses a significant challenge for classification, as models are prone to bias towards the majority class.
+**Class Imbalance**: The dataset exhibits extreme class imbalance. The **Neoplasms (C04)** category accounts for the vast majority of associations, followed by **Nervous System Diseases (C10)**.
+
+![Class Distribution](figures/class_distribution.png)
+
+Rare categories like **Mental Disorders (F01)** represent less than 1% of the data. This poses a significant challenge for classification, as models are prone to bias towards the majority class.
 
 **Feature Correlations**: We observed a strong negative correlation between DSI and DPI.
+
+![Feature Distribution](figures/feature_distribution_boxplot.png)
+
 *   **Tumor Genes (C04)**: Typically have **Low DSI** (Low Specificity) and **High DPI** (High Pleiotropy). This suggests that cancer driver genes are often "molecular multi-taskers" involved in fundamental cellular processes (e.g., cell cycle, apoptosis) that, when dysregulated, can affect multiple tissues.
 *   **Congenital Genes (C16)**: Typically have **High DSI**, indicating they are highly specific to particular developmental defects.
 
 ### 3.3 Model Comparison Tournament
 We evaluated the models using 5-fold cross-validation to ensure robustness. The results are summarized below:
+
+![Model Comparison](figures/model_comparison.png)
 
 | Rank | Model | Micro F1 Score | Key Insight |
 | :--- | :--- | :--- | :--- |
@@ -126,6 +138,9 @@ To fulfill our goal of interpretability, we trained a shallow Decision Tree to e
 
 ### 3.5 Unsupervised Association Mining
 We calculated the Jaccard similarity between disease classes based on their shared genes.
+
+![Disease Similarity Heatmap](figures/disease_similarity_heatmap.png)
+
 1.  **C10 (Nervous) & F03 (Mental)**: High similarity (0.32). This supports the "Mind-Body" connection hypothesis, where neurological and psychiatric conditions share a genetic basis.
 2.  **C04 (Neoplasms) & C06 (Digestive)**: High similarity (0.39). This reflects the high prevalence of digestive tract cancers within the dataset.
 
